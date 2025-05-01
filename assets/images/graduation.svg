@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <style>
+    .st0{fill:#F8FAFC;} 
+    .st1{fill:#126E51;}
+    .st2{fill:#004D40;}
+    .st3{fill:#FFFFFF;}
+    .st4{fill:#FFCA28;}
+    .st5{fill:#0F5A44;}
+    .st6{fill:#1565C0;}
+  </style>
+  <g>
+    <circle class="st0" cx="250" cy="250" r="200"/>
+    <path class="st1" d="M250,50c110.3,0,200,89.7,200,200s-89.7,200-200,200S50,360.3,50,250S139.7,50,250,50 M250,40 C134.1,40,40,134.1,40,250s94.1,210,210,210s210-94.1,210-210S365.9,40,250,40L250,40z"/>
+    <g>
+      <path class="st2" d="M250,130l-120,60l120,60l120-60L250,130z"/>
+      <path class="st3" d="M210,230v60c0,22.1,17.9,40,40,40s40-17.9,40-40v-60l-40,20L210,230z"/>
+      <path class="st4" d="M250,110l-140,70v20l140-70l140,70v-20L250,110z"/>
+      <path class="st5" d="M370,180v80c-5.5,0-10-4.5-10-10v-60L370,180z"/>
+      <rect x="240" y="280" class="st6" width="20" height="40"/>
+      <path class="st1" d="M290,340h-80l-10,20h100L290,340z"/>
+    </g>
+  </g>
+</svg>

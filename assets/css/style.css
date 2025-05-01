@@ -1,0 +1,510 @@
+/* 
+* Main Stylesheet
+* Website Pengecekan Kelulusan SMK NU 1 Slawi
+*/
+
+:root {
+    --primary: #0A6346;     /* Hijau NU utama, disesuaikan dengan logo */
+    --secondary: #084C37;   /* Hijau NU lebih gelap */
+    --dark: #003D30;        /* Hijau sangat gelap */
+    --success: #4CAF50;     /* Hijau success */
+    --warning: #FFC107;     /* Kuning warning */
+    --danger: #F44336;      /* Merah danger */
+    --light: #F8FAFC;       /* Light background */
+    --gray: #6B7280;        /* Gray text */
+    --accent: #1E88E5;      /* Biru accent untuk aksen */
+    --accent-secondary: #0D47A1; /* Biru lebih gelap */
+    --gold: #E6C200;        /* Warna emas untuk aksen tambahan */
+    --nu-green-light: #12825F; /* Hijau NU lebih terang untuk gradasi */
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
+    overflow-x: hidden;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.text-primary {
+    color: var(--primary) !important;
+}
+
+.text-secondary {
+    color: var(--secondary) !important;
+}
+
+/* Buttons */
+.btn {
+    font-weight: 600;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: -100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: all 0.5s ease;
+}
+
+.btn:hover::after {
+    left: 100%;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+}
+
+.btn-accent {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.btn-accent:hover {
+    background-color: var(--accent-secondary);
+    border-color: var(--accent-secondary);
+    color: white;
+}
+
+.btn-nu {
+    background: linear-gradient(45deg, var(--dark), var(--primary));
+    border: none;
+    color: white;
+}
+
+.btn-nu:hover {
+    background: linear-gradient(45deg, var(--primary), var(--nu-green-light));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.btn-outline-nu {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn-outline-nu:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.btn-outline-primary {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary);
+    color: #fff;
+}
+
+/* Cards */
+.card {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+}
+
+/* Navbar Styles */
+.navbar {
+    padding: 15px 0;
+    transition: all 0.3s ease;
+    margin-bottom: 0 !important;
+}
+
+.navbar-dark.bg-nu {
+    background: linear-gradient(90deg, var(--primary), var(--dark));
+    border-bottom: 3px solid var(--gold);
+}
+
+.navbar-brand img.school-logo {
+    height: 44px;
+    width: auto;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover img.school-logo {
+    transform: scale(1.05);
+}
+
+.nav-link {
+    font-weight: 500;
+    padding: 10px 15px !important;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background: var(--gold);
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 70%;
+}
+
+/* Footer Styles */
+.footer-section {
+    margin-top: 5rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.main-footer {
+    background: linear-gradient(135deg, var(--dark), var(--primary));
+    position: relative;
+    z-index: 1;
+}
+
+.main-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background: url('/kelulusan2025/assets/images/logo/logo-skanu.png') no-repeat;
+    opacity: 0.02;
+    background-size: 80%;
+    background-position: right center;
+    z-index: -1;
+}
+
+.footer-heading {
+    position: relative;
+    padding-bottom: 15px;
+    font-weight: 600;
+}
+
+.footer-heading::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--gold);
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+}
+
+.footer-links li a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.footer-links li a:hover {
+    color: var(--gold);
+    transform: translateX(5px);
+}
+
+.social-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.social-icon:hover {
+    background-color: var(--gold);
+    border-color: var(--gold);
+    transform: translateY(-5px);
+    color: var(--dark) !important;
+}
+
+.icon-box {
+    width: 30px;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+}
+
+.copyright-footer {
+    background-color: #003023;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.developer-link {
+    color: var(--gold);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.developer-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, var(--nu-green-light), var(--primary), var(--dark));
+    padding: 90px 0 120px;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-bottom: 5px solid var(--gold);
+    margin-top: 0;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.hero h1 {
+    font-size: 2.8rem;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.hero p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+/* Form Styles */
+.form-control {
+    height: 50px;
+    border-radius: 8px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: #fff;
+    border: 1px solid #E5E7EB;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(77, 97, 244, 0.1);
+}
+
+/* Search Box Styles */
+.search-box {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    position: relative;
+    margin-top: -70px;
+    z-index: 100;
+    border-top: 4px solid var(--primary);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+}
+
+/* Result Card */
+.result-card {
+    background: linear-gradient(135deg, var(--light), #fff);
+    border-left: 5px solid;
+}
+
+.result-card.success {
+    border-left-color: var(--success);
+}
+
+.result-card.failed {
+    border-left-color: var(--danger);
+}
+
+/* Dashboard */
+.dashboard-card {
+    text-align: center;
+    padding: 25px;
+    position: relative;
+    border-radius: 10px;
+}
+
+/* Nu Colors */
+.bg-nu {
+    background-color: var(--primary);
+    color: white;
+}
+
+.text-nu {
+    color: var(--primary);
+}
+
+.dashboard-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    margin: 0 auto 20px auto;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table th {
+    font-weight: 600;
+    padding: 15px;
+    background: #f8f9fa;
+}
+
+.table td {
+    padding: 15px;
+}
+
+/* Login Form */
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+}
+
+/* Status badges */
+.badge-lulus {
+    background-color: var(--primary);
+    color: white;
+    font-weight: 600;
+    padding: 8px 15px;
+    font-size: 14px;
+    letter-spacing: 1px;
+    box-shadow: 0 3px 10px rgba(10, 99, 70, 0.2);
+}
+
+.badge-tidak_lulus {
+    background-color: var(--danger);
+    color: white;
+    font-weight: 600;
+    padding: 8px 15px;
+    font-size: 14px;
+    letter-spacing: 1px;
+    box-shadow: 0 3px 10px rgba(244, 67, 54, 0.2);
+}
+
+/* Logo styling */
+.school-logo {
+    max-height: 55px;
+    width: auto;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero {
+        padding: 70px 0;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .search-box {
+        margin-top: -40px;
+        padding: 25px;
+    }
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Notification */
+.notification {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1050;
+    max-width: 350px;
+}
+
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    .print-only {
+        display: block !important;
+    }
+}
+
+/* Data Tables Customization */
+div.dataTables_wrapper div.dataTables_length select {
+    width: 70px;
+    display: inline-block;
+}
+
+/* Custom Switch */
+.form-switch .form-check-input {
+    width: 3em;
+    height: 1.5em;
+}
