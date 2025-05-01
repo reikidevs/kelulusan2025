@@ -52,11 +52,12 @@ $school_logo = get_config('school_logo', 'logo/logo-skanu.png');
                             <i class="fas fa-user-circle"></i> <?php echo $_SESSION['user_name']; ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <?php if (is_admin()): ?>
+                            <?php if (is_admin() || is_superadmin()): ?>
                             <li><a class="dropdown-item" href="/kelulusan2025/admin/"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
                             <?php endif; ?>
                             <?php if (is_superadmin()): ?>
-                            <li><a class="dropdown-item" href="/kelulusan2025/superadmin/"><i class="fas fa-cogs me-2"></i>Superadmin</a></li>
+                            <li><a class="dropdown-item" href="/kelulusan2025/admin/admins.php"><i class="fas fa-user-shield me-2"></i>Kelola Admin</a></li>
+                            <li><a class="dropdown-item" href="/kelulusan2025/admin/settings.php"><i class="fas fa-cogs me-2"></i>Pengaturan Website</a></li>
                             <?php endif; ?>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="/kelulusan2025/admin/logout.php"><i class="fas fa-sign-out-alt me-2"></i>Keluar</a></li>

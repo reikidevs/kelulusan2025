@@ -34,11 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_role'] = $user['role'];
                 
                 // Redirect based on role
-                if ($user['role'] === 'superadmin') {
-                    redirect('/kelulusan2025/superadmin/');
-                } else {
-                    redirect('/kelulusan2025/admin/');
-                }
+                // Semua role (admin/superadmin) diarahkan ke dashboard admin
+                redirect('/kelulusan2025/admin/');
             } else {
                 $error = 'Password salah';
             }

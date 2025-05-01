@@ -34,6 +34,7 @@ include '../includes/header.php';
     
     <!-- Stats Cards -->
     <div class="row mb-4">
+
         <div class="col-md-3 mb-4">
             <div class="card dashboard-card h-100">
                 <div class="card-body">
@@ -89,6 +90,16 @@ include '../includes/header.php';
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
+                    <div class="col-md-4">
+                            <a href="admins.php" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2 p-3 w-100">
+                                <i class="fas fa-user-shield"></i> Kelola Data Admin
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="settings.php" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2 p-3 w-100">
+                                <i class="fas fa-cog"></i> Pengaturan
+                            </a>
+                        </div>
                         <div class="col-md-4">
                             <a href="students.php" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2 p-3 w-100">
                                 <i class="fas fa-users"></i> Kelola Data Siswa
