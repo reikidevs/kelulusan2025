@@ -3,7 +3,7 @@ require_once '../includes/functions.php';
 
 // Check if user is logged in
 if (!is_logged_in() || !is_admin()) {
-    redirect('/kelulusan2025/admin/login.php');
+    redirect('/admin/login.php');
 }
 
 // Handle delete action
@@ -21,7 +21,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])
         set_flash_message('Gagal menghapus data siswa', 'danger');
     }
     
-    redirect('/kelulusan2025/admin/students.php');
+    redirect(base_url('/admin/students.php'));
 }
 
 // Page title
@@ -36,8 +36,8 @@ include '../includes/header.php';
         <h2 class="mb-0"><?php echo $page_title; ?></h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="/kelulusan2025/">Beranda</a></li>
-                <li class="breadcrumb-item"><a href="/kelulusan2025/admin/">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo base_url('/'); ?>">Beranda</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo base_url('/admin/'); ?>">Dashboard</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Data Siswa</li>
             </ol>
         </nav>
@@ -50,7 +50,7 @@ include '../includes/header.php';
                 <a href="add_student.php" class="btn btn-primary btn-sm">
                     <i class="fas fa-plus me-1"></i> Tambah Siswa
                 </a>
-                <a href="import.php" class="btn btn-success btn-sm ms-1">
+                <a href="import_excel.php" class="btn btn-success btn-sm ms-1">
                     <i class="fas fa-file-import me-1"></i> Import Data
                 </a>
                 <a href="export.php" class="btn btn-info btn-sm ms-1">
@@ -63,10 +63,10 @@ include '../includes/header.php';
             <div class="row mb-4">
                 <div class="col-md-12">
                     <form action="" method="GET" class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan nama/nomor ujian" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <select name="class" class="form-select">
                                 <option value="">Semua Kelas</option>
                                 <?php
@@ -84,6 +84,23 @@ include '../includes/header.php';
                             </select>
                         </div>
                         <div class="col-md-3">
+                            <select name="jurusan" class="form-select">
+                                <option value="">Semua Jurusan</option>
+                                <?php
+                                // Get unique jurusan
+                                $sql = "SELECT DISTINCT jurusan FROM students ORDER BY jurusan";
+                                $result = $conn->query($sql);
+                                
+                                if ($result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        $selected = (isset($_GET['jurusan']) && $_GET['jurusan'] === $row['jurusan']) ? 'selected' : '';
+                                        echo "<option value=\"{$row['jurusan']}\" {$selected}>{$row['jurusan']}</option>";
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
                             <select name="status" class="form-select">
                                 <option value="">Semua Status</option>
                                 <option value="lulus" <?php echo (isset($_GET['status']) && $_GET['status'] === 'lulus') ? 'selected' : ''; ?>>Lulus</option>
@@ -103,47 +120,86 @@ include '../includes/header.php';
                     <thead>
                         <tr>
                             <th>No. Ujian</th>
+                            <th>Password</th>
                             <th>NISN</th>
                             <th>Nama Siswa</th>
                             <th>Kelas</th>
+                            <th>Jurusan</th>
                             <th>Tanggal Lahir</th>
                             <th>Status</th>
-                            <th width="120">Aksi</th>
+                            <th>Administrasi</th>
+                            <th width="150">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
+                        // Pagination settings
+                        $items_per_page = 10;
+                        $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                        if ($current_page < 1) $current_page = 1;
+                        $offset = ($current_page - 1) * $items_per_page;
+                        
                         // Build query with filters
                         $sql = "SELECT * FROM students WHERE 1=1";
+                        $count_sql = "SELECT COUNT(*) as total FROM students WHERE 1=1";
                         $params = [];
                         $types = "";
                         
-                        // Apply search filter
+                        // Add search filter
                         if (isset($_GET['search']) && !empty($_GET['search'])) {
                             $search = '%' . $_GET['search'] . '%';
-                            $sql .= " AND (name LIKE ? OR exam_number LIKE ?)";
+                            $where_clause = " AND (name LIKE ? OR exam_number LIKE ?)";
+                            $sql .= $where_clause;
+                            $count_sql .= $where_clause;
                             $params[] = $search;
                             $params[] = $search;
                             $types .= "ss";
                         }
                         
-                        // Apply class filter
+                        // Add class filter
                         if (isset($_GET['class']) && !empty($_GET['class'])) {
-                            $sql .= " AND class = ?";
+                            $where_clause = " AND class = ?";
+                            $sql .= $where_clause;
+                            $count_sql .= $where_clause;
                             $params[] = $_GET['class'];
                             $types .= "s";
                         }
                         
-                        // Apply status filter
+                        // Add jurusan filter
+                        if (isset($_GET['jurusan']) && !empty($_GET['jurusan'])) {
+                            $where_clause = " AND jurusan = ?";
+                            $sql .= $where_clause;
+                            $count_sql .= $where_clause;
+                            $params[] = $_GET['jurusan'];
+                            $types .= "s";
+                        }
+                        
+                        // Add status filter
                         if (isset($_GET['status']) && !empty($_GET['status'])) {
-                            $sql .= " AND status = ?";
+                            $where_clause = " AND status = ?";
+                            $sql .= $where_clause;
+                            $count_sql .= $where_clause;
                             $params[] = $_GET['status'];
                             $types .= "s";
                         }
                         
-                        $sql .= " ORDER BY class, name";
+                        // Get total count for pagination
+                        $count_stmt = $conn->prepare($count_sql);
+                        if (!empty($params)) {
+                            $count_stmt->bind_param($types, ...$params);
+                        }
+                        $count_stmt->execute();
+                        $count_result = $count_stmt->get_result()->fetch_assoc();
+                        $total_items = $count_result['total'];
+                        $total_pages = ceil($total_items / $items_per_page);
                         
-                        // Prepare and execute query
+                        // Sort order and add pagination
+                        $sql .= " ORDER BY class, name LIMIT ?, ?";
+                        $params[] = $offset;
+                        $params[] = $items_per_page;
+                        $types .= "ii";
+                        
+                        // Prepare and execute statement
                         $stmt = $conn->prepare($sql);
                         
                         if (!empty($params)) {
@@ -157,29 +213,114 @@ include '../includes/header.php';
                             while ($row = $result->fetch_assoc()) {
                                 echo '<tr>';
                                 echo '<td>' . $row['exam_number'] . '</td>';
+                                // Password with hide/show functionality
+                                $password = isset($row['password']) ? $row['password'] : 'N/A';
+                                echo '<td>
+                                      <div class="password-field">
+                                        <span class="password-hidden">••••••</span>
+                                        <span class="password-visible d-none">' . $password . '</span>
+                                        <button type="button" class="btn btn-sm btn-icon toggle-password">
+                                          <i class="fas fa-eye"></i>
+                                        </button>
+                                      </div>
+                                    </td>';
                                 echo '<td>' . $row['nisn'] . '</td>';
                                 echo '<td>' . $row['name'] . '</td>';
                                 echo '<td>' . $row['class'] . '</td>';
+                                $jurusan = isset($row['jurusan']) ? $row['jurusan'] : 'N/A';
+                                echo '<td>' . $jurusan . '</td>';
                                 echo '<td>' . format_tanggal_indo($row['birth_date']) . '</td>';
                                 echo '<td><span class="badge ' . ($row['status'] === 'lulus' ? 'badge-lulus' : 'badge-tidak_lulus') . '">' . 
                                       ($row['status'] === 'lulus' ? 'Lulus' : 'Tidak Lulus') . '</span></td>';
+                                $status_administrasi = isset($row['status_administrasi']) ? $row['status_administrasi'] : 0;
+                                echo '<td><span class="badge bg-' . ($status_administrasi == 1 ? 'success' : 'warning') . '">' . 
+                                      ($status_administrasi == 1 ? 'Lunas' : 'Belum Lunas') . '</span></td>';
                                 echo '<td>
-                                        <a href="edit_student.php?id=' . $row['id'] . '" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#confirmationModal" data-action="delete" data-id="' . $row['id'] . '" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Hapus">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
+                                        <div class="btn-group" role="group">
+                                            <a href="edit_student.php?id=' . $row['id'] . '" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#confirmationModal" data-action="delete" data-id="' . $row['id'] . '" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Hapus">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
                                       </td>';
                                 echo '</tr>';
                             }
                         } else {
-                            echo '<tr><td colspan="7" class="text-center">Tidak ada data siswa</td></tr>';
+                            echo '<tr><td colspan="10" class="text-center">Tidak ada data siswa</td></tr>';
                         }
                         ?>
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Pagination -->
+            <?php if ($total_pages > 1): ?>
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <div class="text-muted small">
+                    Menampilkan <?php echo $offset + 1; ?> - <?php echo min($offset + $items_per_page, $total_items); ?> dari <?php echo $total_items; ?> data
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <!-- Previous page link -->
+                        <?php if ($current_page > 1): ?>
+                        <li class="page-item">
+                            <a class="page-link" href="<?php echo '?page=' . ($current_page - 1) . 
+                                (isset($_GET['search']) && !empty($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '') . 
+                                (isset($_GET['class']) && !empty($_GET['class']) ? '&class=' . urlencode($_GET['class']) : '') . 
+                                (isset($_GET['jurusan']) && !empty($_GET['jurusan']) ? '&jurusan=' . urlencode($_GET['jurusan']) : '') . 
+                                (isset($_GET['status']) && !empty($_GET['status']) ? '&status=' . urlencode($_GET['status']) : ''); ?>">
+                                &laquo; Sebelumnya
+                            </a>
+                        </li>
+                        <?php else: ?>
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo; Sebelumnya</span>
+                        </li>
+                        <?php endif; ?>
+                        
+                        <!-- Page numbers -->
+                        <?php
+                        $start_page = max(1, $current_page - 2);
+                        $end_page = min($total_pages, $current_page + 2);
+                        
+                        for ($i = $start_page; $i <= $end_page; $i++) {
+                            echo '<li class="page-item' . ($i == $current_page ? ' active' : '') . '">';
+                            if ($i == $current_page) {
+                                echo '<span class="page-link">' . $i . '</span>';
+                            } else {
+                                echo '<a class="page-link" href="?page=' . $i . 
+                                    (isset($_GET['search']) && !empty($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '') . 
+                                    (isset($_GET['class']) && !empty($_GET['class']) ? '&class=' . urlencode($_GET['class']) : '') . 
+                                    (isset($_GET['jurusan']) && !empty($_GET['jurusan']) ? '&jurusan=' . urlencode($_GET['jurusan']) : '') . 
+                                    (isset($_GET['status']) && !empty($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '') . 
+                                    '">' . $i . '</a>';
+                            }
+                            echo '</li>';
+                        }
+                        ?>
+                        
+                        <!-- Next page link -->
+                        <?php if ($current_page < $total_pages): ?>
+                        <li class="page-item">
+                            <a class="page-link" href="<?php echo '?page=' . ($current_page + 1) . 
+                                (isset($_GET['search']) && !empty($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '') . 
+                                (isset($_GET['class']) && !empty($_GET['class']) ? '&class=' . urlencode($_GET['class']) : '') . 
+                                (isset($_GET['jurusan']) && !empty($_GET['jurusan']) ? '&jurusan=' . urlencode($_GET['jurusan']) : '') . 
+                                (isset($_GET['status']) && !empty($_GET['status']) ? '&status=' . urlencode($_GET['status']) : ''); ?>">
+                                Selanjutnya &raquo;
+                            </a>
+                        </li>
+                        <?php else: ?>
+                        <li class="page-item disabled">
+                            <span class="page-link">Selanjutnya &raquo;</span>
+                        </li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -203,9 +344,124 @@ include '../includes/header.php';
     </div>
 </div>
 
+<!-- Notification Modal -->
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">Notifikasi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="notificationModalBody">
+                <!-- Message will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- DataTables JS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+<style>
+.password-field {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.btn-icon {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+}
+</style>
+
+<script>
+// Toggle password visibility and handle confirmation modal
+document.addEventListener('DOMContentLoaded', function() {
+    // Password toggle functionality
+    const toggleButtons = document.querySelectorAll('.toggle-password');
+    
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const passwordField = this.closest('.password-field');
+            const hiddenText = passwordField.querySelector('.password-hidden');
+            const visibleText = passwordField.querySelector('.password-visible');
+            const icon = this.querySelector('i');
+            
+            if (hiddenText.classList.contains('d-none')) {
+                // Switch to hidden
+                hiddenText.classList.remove('d-none');
+                visibleText.classList.add('d-none');
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            } else {
+                // Switch to visible
+                hiddenText.classList.add('d-none');
+                visibleText.classList.remove('d-none');
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            }
+        });
+    });
+    
+    // Initialize tooltips
+    const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    if (tooltips.length > 0) {
+        tooltips.forEach(tooltip => {
+            new bootstrap.Tooltip(tooltip);
+        });
+    }
+    
+    // Show notification modal for flash messages
+    <?php if (isset($_SESSION['flash_message']) && !empty($_SESSION['flash_message'])): ?>
+        const notificationModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+        const modalBody = document.getElementById('notificationModalBody');
+        
+        // Set message type and content
+        const messageType = '<?php echo $_SESSION['flash_message_type']; ?>';
+        const messageContent = '<?php echo $_SESSION['flash_message']; ?>';
+        
+        // Create alert div
+        modalBody.innerHTML = `<div class="alert alert-${messageType} mb-0">${messageContent}</div>`;
+        
+        // Show modal
+        notificationModal.show();
+        
+        // Clear flash message after displaying
+        <?php unset($_SESSION['flash_message'], $_SESSION['flash_message_type']); ?>
+    <?php endif; ?>
+    
+    // Handle confirmation modal for delete action
+    const confirmationModal = document.getElementById('confirmationModal');
+    if (confirmationModal) {
+        let actionType = '';
+        let itemId = '';
+        
+        // When the modal is shown, update the action and ID
+        confirmationModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            actionType = button.getAttribute('data-action');
+            itemId = button.getAttribute('data-id');
+        });
+        
+        // When the confirm button is clicked, perform the action
+        const confirmButton = document.getElementById('confirmAction');
+        if (confirmButton) {
+            confirmButton.addEventListener('click', function() {
+                if (actionType === 'delete' && itemId) {
+                    // Redirect to the delete.php dengan base_url
+                    const deleteUrl = '<?php echo base_url("/admin/delete.php"); ?>?id=' + itemId;
+                    console.log('Redirecting to:', deleteUrl); // Debug untuk melihat URL yang dibentuk
+                    window.location.href = deleteUrl;
+                }
+            });
+        }
+    }
+});
+</script>
 
 <?php include '../includes/footer.php'; ?>

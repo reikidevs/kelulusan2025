@@ -40,9 +40,12 @@ if ($conn->query($sql) !== TRUE) {
 $sql = "CREATE TABLE IF NOT EXISTS `students` (
     `id` INT(11) AUTO_INCREMENT PRIMARY KEY,
     `exam_number` VARCHAR(50) NOT NULL UNIQUE,
+    `password` VARCHAR(100) NOT NULL,
     `name` VARCHAR(100) NOT NULL,
     `class` VARCHAR(50) NOT NULL,
+    `jurusan` VARCHAR(100) NOT NULL,
     `status` ENUM('lulus', 'tidak_lulus') NOT NULL,
+    `status_administrasi` TINYINT(1) DEFAULT 0 NOT NULL COMMENT '0=Belum Lunas, 1=Lunas',
     `nisn` VARCHAR(20) NOT NULL,
     `birth_date` DATE NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

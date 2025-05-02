@@ -3,7 +3,7 @@ require_once '../includes/functions.php';
 
 // Redirect if already logged in
 if (is_logged_in()) {
-    redirect('/kelulusan2025/admin/');
+    redirect('/admin/');
 }
 
 $error = '';
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // Redirect based on role
                 // Semua role (admin/superadmin) diarahkan ke dashboard admin
-                redirect('/kelulusan2025/admin/');
+                redirect('/admin/');
             } else {
                 $error = 'Password salah';
             }
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $site_title = get_config('site_title', 'Pengumuman Kelulusan SMK NU 1 Slawi');
 $school_name = get_config('school_name', 'SMK NU 1 Slawi');
-$school_logo = get_config('school_logo', 'logo.png');
+$school_logo = get_config('school_logo', 'logo/logo-skanu.png');
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -66,17 +66,16 @@ $school_logo = get_config('school_logo', 'logo.png');
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/kelulusan2025/assets/css/style.css">
+    <link rel="stylesheet" href="<?php echo base_url('/assets/css/style.css'); ?>">
 </head>
 <body class="bg-light">
     <div class="container">
         <div class="login-container card shadow">
             <div class="text-center mb-4">
-                <a href="/kelulusan2025/">
-                    <img src="/kelulusan2025/assets/images/<?php echo $school_logo; ?>" alt="<?php echo $school_name; ?>" height="60" class="mb-3">
-                </a>
                 <h3>Login Admin</h3>
-                <p class="text-muted"><?php echo $school_name; ?></p>
+                <a href="<?php echo base_url('/'); ?>">
+                <img src="<?php echo base_url('/assets/images/logo/logo-skanu.png'); ?>" alt="<?php echo $school_name; ?>" class="school-logo me-2">
+                </a>
             </div>
             
             <?php if ($error): ?>
@@ -107,7 +106,7 @@ $school_logo = get_config('school_logo', 'logo.png');
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-sign-in-alt me-2"></i> Masuk
                     </button>
-                    <a href="/kelulusan2025/" class="btn btn-outline-secondary">
+                    <a href="<?php echo base_url('/'); ?>" class="btn btn-outline-secondary">
                         <i class="fas fa-home me-2"></i> Kembali ke Beranda
                     </a>
                 </div>
@@ -126,6 +125,6 @@ $school_logo = get_config('school_logo', 'logo.png');
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <!-- Custom JavaScript -->
-    <script src="/kelulusan2025/assets/js/script.js"></script>
+    <script src="<?php echo base_url('/assets/js/script.js'); ?>"></script>
 </body>
 </html>

@@ -4,6 +4,29 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+/**
+ * Get base URL for the application
+ * 
+ * @param string $path Path to append to base URL
+ * @return string Complete URL
+ */
+function base_url($path = '') {
+    $base_url = '';
+    $server_name = $_SERVER['SERVER_NAME'] ?? '';
+    
+    // If in development environment (localhost or local IP)
+    if ($server_name == 'localhost' || $server_name == '127.0.0.1' || strpos($server_name, '192.168.') === 0) {
+        $base_url = '/kelulusan2025';
+    }
+    
+    // Make sure path starts with a slash if not empty
+    if (!empty($path) && substr($path, 0, 1) !== '/') {
+        $path = '/' . $path;
+    }
+    
+    return $base_url . $path;
+}
+
 // Include database connection
 require_once __DIR__ . '/../config/database.php';
 
@@ -79,9 +102,13 @@ function is_superadmin() {
  * Redirect to a URL
  * 
  * @param string $url URL to redirect to
+ * @param bool $use_base_url Whether to prepend base_url to the URL
  * @return void
  */
-function redirect($url) {
+function redirect($url, $use_base_url = true) {
+    if ($use_base_url) {
+        $url = base_url($url);
+    }
     header("Location: $url");
     exit;
 }
@@ -119,17 +146,45 @@ function set_flash_message($message, $type = 'info') {
 }
 
 /**
- * Verify student by exam number
+ * Generate random password
+ * 
+ * @param int $length Length of password
+ * @return string Random password
+ */
+function generate_random_password($length = 6) {
+    $chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $password = '';
+    $chars_length = strlen($chars) - 1;
+    
+    for ($i = 0; $i < $length; $i++) {
+        $password .= $chars[rand(0, $chars_length)];
+    }
+    
+    return $password;
+}
+
+/**
+ * Verify student by exam number and password
  * 
  * @param string $exam_number Exam number to verify
- * @return array|bool Student data or false if not found
+ * @param string $password Password to verify
+ * @return array|bool Student data or false if not found or password incorrect
  */
-function verify_student($exam_number) {
+function verify_student($exam_number, $password = '') {
     global $conn;
     
-    $sql = "SELECT * FROM students WHERE exam_number = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $exam_number);
+    // If password is empty (old method), just check exam number
+    if (empty($password)) {
+        $sql = "SELECT * FROM students WHERE exam_number = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $exam_number);
+    } else {
+        // Check both exam number and password
+        $sql = "SELECT * FROM students WHERE exam_number = ? AND password = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ss", $exam_number, $password);
+    }
+    
     $stmt->execute();
     $result = $stmt->get_result();
     

@@ -3,7 +3,7 @@ require_once '../includes/functions.php';
 
 // Check if user is logged in
 if (!is_logged_in() || !is_admin()) {
-    redirect('/kelulusan2025/admin/login.php');
+    redirect('/admin/login.php');
 }
 
 // Check if ID parameter exists
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if ($update_stmt->execute()) {
                 set_flash_message('Data siswa berhasil diperbarui', 'success');
-                redirect('/kelulusan2025/admin/students.php');
+                redirect('/admin/students.php');
             } else {
                 $error = 'Gagal memperbarui data siswa: ' . $conn->error;
             }
@@ -80,9 +80,9 @@ include '../includes/header.php';
         <h2 class="mb-0"><?php echo $page_title; ?></h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="/kelulusan2025/">Beranda</a></li>
-                <li class="breadcrumb-item"><a href="/kelulusan2025/admin/">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="/kelulusan2025/admin/students.php">Data Siswa</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo base_url('/'); ?>">Beranda</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo base_url('/admin/'); ?>">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo base_url('/admin/students.php'); ?>">Data Siswa</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Edit Siswa</li>
             </ol>
         </nav>
@@ -131,7 +131,7 @@ include '../includes/header.php';
                     <div class="col-12 mt-4">
                         <hr>
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="/kelulusan2025/admin/students.php" class="btn btn-secondary">
+                            <a href="<?php echo base_url('/admin/students.php'); ?>" class="btn btn-secondary">
                                 <i class="fas fa-times me-1"></i> Batal
                             </a>
                             <button type="submit" class="btn btn-primary">

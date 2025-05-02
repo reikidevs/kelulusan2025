@@ -3,7 +3,7 @@ require_once '../includes/functions.php';
 
 // Check if user is logged in
 if (!is_logged_in() || !is_admin()) {
-    redirect('/kelulusan2025/admin/login.php');
+    redirect('/admin/login.php');
 }
 
 $error = '';
@@ -16,11 +16,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nisn = clean_input($_POST['nisn']);
     $name = clean_input($_POST['name']);
     $class = clean_input($_POST['class']);
+    $jurusan = clean_input($_POST['jurusan']);
     $birth_date = clean_input($_POST['birth_date']);
     $status = clean_input($_POST['status']);
+    $status_administrasi = isset($_POST['status_administrasi']) ? 1 : 0;
+    
+    // Generate random password
+    $password = generate_random_password();
     
     // Validate input
-    if (empty($exam_number) || empty($nisn) || empty($name) || empty($class) || empty($birth_date)) {
+    if (empty($exam_number) || empty($nisn) || empty($name) || empty($class) || empty($jurusan) || empty($birth_date)) {
         $error = 'Semua field harus diisi';
     } else {
         // Check if exam number already exists
@@ -34,13 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Nomor ujian sudah terdaftar';
         } else {
             // Insert new student
-            $sql = "INSERT INTO students (exam_number, nisn, name, class, birth_date, status) VALUES (?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO students (exam_number, password, nisn, name, class, jurusan, birth_date, status, status_administrasi) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssss", $exam_number, $nisn, $name, $class, $birth_date, $status);
+            $stmt->bind_param("ssssssssi", $exam_number, $password, $nisn, $name, $class, $jurusan, $birth_date, $status, $status_administrasi);
             
             if ($stmt->execute()) {
                 set_flash_message('Data siswa berhasil ditambahkan', 'success');
-                redirect('/kelulusan2025/admin/students.php');
+                redirect('/admin/students.php');
             } else {
                 $error = 'Gagal menambahkan data siswa: ' . $conn->error;
             }
@@ -98,6 +103,10 @@ include '../includes/header.php';
                         <input type="text" class="form-control" id="class" name="class" value="<?php echo isset($_POST['class']) ? htmlspecialchars($_POST['class']) : ''; ?>" required>
                     </div>
                     <div class="col-md-6">
+                        <label for="jurusan" class="form-label">Jurusan <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="jurusan" name="jurusan" value="<?php echo isset($_POST['jurusan']) ? htmlspecialchars($_POST['jurusan']) : ''; ?>" required>
+                    </div>
+                    <div class="col-md-6">
                         <label for="birth_date" class="form-label">Tanggal Lahir <span class="text-danger">*</span></label>
                         <input type="date" class="form-control" id="birth_date" name="birth_date" value="<?php echo isset($_POST['birth_date']) ? htmlspecialchars($_POST['birth_date']) : ''; ?>" required>
                     </div>
@@ -108,15 +117,24 @@ include '../includes/header.php';
                             <option value="tidak_lulus" <?php echo (isset($_POST['status']) && $_POST['status'] === 'tidak_lulus') ? 'selected' : ''; ?>>Tidak Lulus</option>
                         </select>
                     </div>
+                    <div class="col-md-6">
+                        <label for="status_administrasi" class="form-label">Status Administrasi</label>
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" id="status_administrasi" name="status_administrasi" <?php echo (isset($_POST['status_administrasi'])) ? 'checked' : ''; ?>>
+                            <label class="form-check-label" for="status_administrasi">Lunas</label>
+                        </div>
+                        <small class="form-text text-muted">Centang jika administrasi sudah lunas</small>
+                    </div>
                     <div class="col-12 mt-4">
                         <hr>
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="/kelulusan2025/admin/students.php" class="btn btn-secondary">
+                            <a href="<?php echo base_url('/admin/students.php'); ?>" class="btn btn-secondary">
                                 <i class="fas fa-times me-1"></i> Batal
                             </a>
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-1"></i> Simpan
                             </button>
+                            <p class="text-muted small mt-3">Password akan digenerate otomatis dan ditampilkan setelah data disimpan.</p>
                         </div>
                     </div>
                 </div>

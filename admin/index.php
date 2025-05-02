@@ -3,7 +3,7 @@ require_once '../includes/functions.php';
 
 // Check if user is logged in
 if (!is_logged_in() || !is_admin()) {
-    redirect('/kelulusan2025/admin/login.php');
+    redirect('/admin/login.php');
 }
 
 // Count stats
@@ -26,7 +26,7 @@ include '../includes/header.php';
         <h2 class="mb-0"><?php echo $page_title; ?></h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="/kelulusan2025/">Beranda</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo base_url('/'); ?>">Beranda</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
             </ol>
         </nav>
@@ -90,16 +90,21 @@ include '../includes/header.php';
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
-                    <div class="col-md-4">
+                        <?php if (is_superadmin()): ?>
+                        <!-- Menu khusus superadmin -->
+                        <div class="col-md-4">
                             <a href="admins.php" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2 p-3 w-100">
                                 <i class="fas fa-user-shield"></i> Kelola Data Admin
                             </a>
                         </div>
                         <div class="col-md-4">
                             <a href="settings.php" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2 p-3 w-100">
-                                <i class="fas fa-cog"></i> Pengaturan
+                                <i class="fas fa-cog"></i> Pengaturan Website
                             </a>
                         </div>
+                        <?php endif; ?>
+                        
+                        <!-- Menu untuk semua admin -->
                         <div class="col-md-4">
                             <a href="students.php" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2 p-3 w-100">
                                 <i class="fas fa-users"></i> Kelola Data Siswa

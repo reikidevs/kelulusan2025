@@ -9,7 +9,7 @@
                     <!-- Column 1: School Info -->
                     <div class="col-lg-4 col-md-6">
                         <div class="d-flex align-items-center mb-4">
-                            <img src="/kelulusan2025/assets/images/logo/logo-skanu.png" alt="<?php echo $school_name; ?>" height="60" class="me-3">
+                            <img src="<?php echo base_url('/assets/images/logo/logo-skanu.png'); ?>" alt="<?php echo $school_name; ?>" height="60" class="me-3">
                             <div>
                                 <h4 class="text-white fw-bold mb-1"><?php echo $school_name; ?></h4>
                                 <p class="text-white-50 fs-6 mb-0">Pendidikan Berkualitas Berbasis Pesantren</p>
@@ -40,9 +40,9 @@
                     <div class="col-lg-2 col-md-6">
                         <h5 class="text-white mb-4 footer-heading">Tautan</h5>
                         <ul class="list-unstyled footer-links">
-                            <li><a href="/kelulusan2025/"><i class="fas fa-angle-right me-2"></i>Beranda</a></li>
+                            <li><a href="<?php echo base_url('/'); ?>"><i class="fas fa-angle-right me-2"></i>Beranda</a></li>
                             <li><a href="#cek-kelulusan"><i class="fas fa-angle-right me-2"></i>Cek Kelulusan</a></li>
-                            <li><a href="/kelulusan2025/admin/login.php"><i class="fas fa-angle-right me-2"></i>Admin Login</a></li>
+                            <li><a href="<?php echo base_url('/admin/login.php'); ?>"><i class="fas fa-angle-right me-2"></i>Admin Login</a></li>
                         </ul>
                     </div>
 
@@ -102,7 +102,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <!-- Custom JavaScript -->
-    <script src="/kelulusan2025/assets/js/script.js"></script>
-    <script src="/kelulusan2025/assets/js/animations.js"></script>
+    <script src="<?php echo base_url('/assets/js/script.js'); ?>"></script>
+    <script src="<?php echo base_url('/assets/js/animations.js'); ?>"></script>
 </body>
 </html>

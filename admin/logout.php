@@ -6,5 +6,5 @@ session_start();
 session_destroy();
 
 // Redirect to login page
-redirect('/kelulusan2025/admin/login.php');
+redirect('/admin/login.php');
 ?>
