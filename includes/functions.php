@@ -151,16 +151,85 @@ function set_flash_message($message, $type = 'info') {
  * @param int $length Length of password
  * @return string Random password
  */
-function generate_random_password($length = 6) {
-    $chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $password = '';
-    $chars_length = strlen($chars) - 1;
+function generate_random_password($length = 10) {
+    // Karakter yang digunakan untuk password (huruf, angka, dan simbol)
+    $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    $numbers = '0123456789';
+    $symbols = '!@#$%&*-_+.'; // Simbol yang lebih sederhana dan tidak terlalu banyak
     
-    for ($i = 0; $i < $length; $i++) {
-        $password .= $chars[rand(0, $chars_length)];
+    // Pastikan panjang password minimal 10 karakter
+    if ($length < 10) $length = 10;
+    
+    // Generate password dengan komposisi dominan huruf
+    $password = [];
+    
+    // Pastikan password memiliki minimal:
+    // - 1 huruf kapital
+    // - 1 huruf kecil
+    // - 1 angka
+    // - 1 simbol (opsional, tapi direkomendasikan)
+    $password[] = $uppercase[rand(0, strlen($uppercase) - 1)]; // Min 1 uppercase
+    $password[] = $lowercase[rand(0, strlen($lowercase) - 1)]; // Min 1 lowercase
+    $password[] = $numbers[rand(0, strlen($numbers) - 1)]; // Min 1 number
+    $password[] = $symbols[rand(0, strlen($symbols) - 1)]; // Min 1 simbol
+    
+    // Untuk sisa karakter, dominan huruf (70% huruf, 20% angka, 10% simbol)
+    $remaining_length = $length - count($password);
+    
+    for ($i = 0; $i < $remaining_length; $i++) {
+        $rand = rand(1, 10);
+        
+        if ($rand <= 7) { // 70% huruf
+            // 50-50 huruf besar dan kecil
+            if (rand(0, 1) == 0) {
+                $password[] = $uppercase[rand(0, strlen($uppercase) - 1)];
+            } else {
+                $password[] = $lowercase[rand(0, strlen($lowercase) - 1)];
+            }
+        } else if ($rand <= 9) { // 20% angka
+            $password[] = $numbers[rand(0, strlen($numbers) - 1)];
+        } else { // 10% simbol
+            $password[] = $symbols[rand(0, strlen($symbols) - 1)];
+        }
     }
     
-    return $password;
+    // Acak urutan karakter password
+    shuffle($password);
+    
+    // Gabungkan array menjadi string
+    return implode('', $password);
+}
+
+/**
+ * Generate unique random password
+ * 
+ * @param int $length Length of password
+ * @return string Unique random password
+ */
+function generate_unique_password($length = 10) {
+    global $conn;
+    
+    // Coba hingga 10 kali untuk mendapatkan password unik
+    for ($attempt = 0; $attempt < 10; $attempt++) {
+        $password = generate_random_password($length);
+        
+        // Periksa apakah password sudah ada di database
+        $sql = "SELECT COUNT(*) as count FROM students WHERE password = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $password);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        
+        // Jika password unik, kembalikan
+        if ($row['count'] == 0) {
+            return $password;
+        }
+    }
+    
+    // Jika setelah 10 percobaan masih belum unik, tambahkan timestamp ke password
+    return generate_random_password($length - 5) . substr(time(), -5);
 }
 
 /**

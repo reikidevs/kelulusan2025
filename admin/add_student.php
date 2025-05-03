@@ -19,10 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $jurusan = clean_input($_POST['jurusan']);
     $birth_date = clean_input($_POST['birth_date']);
     $status = clean_input($_POST['status']);
-    $status_administrasi = isset($_POST['status_administrasi']) ? 1 : 0;
     
-    // Generate random password
-    $password = generate_random_password();
+    // Generate unique random password (10 karakter dengan kombinasi simbol)
+    $password = generate_unique_password(10);
     
     // Validate input
     if (empty($exam_number) || empty($nisn) || empty($name) || empty($class) || empty($jurusan) || empty($birth_date)) {
@@ -39,9 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Nomor ujian sudah terdaftar';
         } else {
             // Insert new student
-            $sql = "INSERT INTO students (exam_number, password, nisn, name, class, jurusan, birth_date, status, status_administrasi) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO students (exam_number, password, nisn, name, class, jurusan, birth_date, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssssssi", $exam_number, $password, $nisn, $name, $class, $jurusan, $birth_date, $status, $status_administrasi);
+            $stmt->bind_param("ssssssss", $exam_number, $password, $nisn, $name, $class, $jurusan, $birth_date, $status);
             
             if ($stmt->execute()) {
                 set_flash_message('Data siswa berhasil ditambahkan', 'success');
@@ -117,14 +116,7 @@ include '../includes/header.php';
                             <option value="tidak_lulus" <?php echo (isset($_POST['status']) && $_POST['status'] === 'tidak_lulus') ? 'selected' : ''; ?>>Tidak Lulus</option>
                         </select>
                     </div>
-                    <div class="col-md-6">
-                        <label for="status_administrasi" class="form-label">Status Administrasi</label>
-                        <div class="form-check form-switch mt-2">
-                            <input class="form-check-input" type="checkbox" id="status_administrasi" name="status_administrasi" <?php echo (isset($_POST['status_administrasi'])) ? 'checked' : ''; ?>>
-                            <label class="form-check-label" for="status_administrasi">Lunas</label>
-                        </div>
-                        <small class="form-text text-muted">Centang jika administrasi sudah lunas</small>
-                    </div>
+
                     <div class="col-12 mt-4">
                         <hr>
                         <div class="d-flex justify-content-end gap-2">

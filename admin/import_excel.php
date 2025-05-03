@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                 $header = array_shift($rows); // Removes and returns the first row (header)
                 
                 // Prepare insert statement
-                $sql = "INSERT INTO students (exam_number, password, nisn, name, class, jurusan, birth_date, status, status_administrasi) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO students (exam_number, password, nisn, name, class, jurusan, birth_date, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $conn->prepare($sql);
                 
                 // Count successful imports
@@ -64,27 +64,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                         
                         // Convert birth date from DD/MM/YYYY to YYYY-MM-DD
                         $birth_date_input = trim($row[5]);
+                        $birth_date = null;
+                        
+                        // Try DD/MM/YYYY format (e.g., 15/06/2007)
                         if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $birth_date_input, $matches)) {
-                            // Get day, month, year from the matches
-                            $day = str_pad($matches[1], 2, '0', STR_PAD_LEFT);
-                            $month = str_pad($matches[2], 2, '0', STR_PAD_LEFT);
-                            $year = $matches[3];
-                            $birth_date = "$year-$month-$day";
-                        } else {
-                            // Assume it's already in the correct format or handle error
-                            $birth_date = $birth_date_input;
+                            $day = (int)$matches[1];
+                            $month = (int)$matches[2];
+                            $year = (int)$matches[3];
+                            
+                            // Validate date components
+                            if ($day >= 1 && $day <= 31 && $month >= 1 && $month <= 12 && $year >= 1900 && $year <= 2100) {
+                                // Format with leading zeros
+                                $day = str_pad($day, 2, '0', STR_PAD_LEFT);
+                                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+                                $birth_date = "$year-$month-$day";
+                            }
+                        }
+                        
+                        // If still not valid, try other common formats
+                        if (!$birth_date) {
+                            // Try YYYY-MM-DD format
+                            if (preg_match('/^(\d{4})-(\d{1,2})-(\d{1,2})$/', $birth_date_input, $matches)) {
+                                $year = (int)$matches[1];
+                                $month = (int)$matches[2];
+                                $day = (int)$matches[3];
+                                
+                                // Validate date components
+                                if ($day >= 1 && $day <= 31 && $month >= 1 && $month <= 12 && $year >= 1900 && $year <= 2100) {
+                                    // Format with leading zeros
+                                    $day = str_pad($day, 2, '0', STR_PAD_LEFT);
+                                    $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+                                    $birth_date = "$year-$month-$day";
+                                }
+                            }
+                            // Try MM/DD/YYYY format (US format)
+                            else if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $birth_date_input, $matches)) {
+                                $month = (int)$matches[1];
+                                $day = (int)$matches[2];
+                                $year = (int)$matches[3];
+                                
+                                // Validate date components
+                                if ($day >= 1 && $day <= 31 && $month >= 1 && $month <= 12 && $year >= 1900 && $year <= 2100) {
+                                    // Format with leading zeros
+                                    $day = str_pad($day, 2, '0', STR_PAD_LEFT);
+                                    $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+                                    $birth_date = "$year-$month-$day";
+                                }
+                            }
+                        }
+                        
+                        // If date is still not valid, use current date as fallback and add to errors
+                        if (!$birth_date) {
+                            $errors[] = "Baris ke-" . ($row_index + 1) . ": Format tanggal lahir '$birth_date_input' tidak valid";
+                            $birth_date = date('Y-m-d'); // Current date as fallback
                         }
                         
                         $status = strtolower(trim($row[6]));
                         
-                        // Status administrasi (optional, default to 0)
-                        $status_administrasi = 0; // Default to 'Belum Lunas'
-                        if (isset($row[7])) {
-                            $admin_status = strtolower(trim($row[7]));
-                            if ($admin_status === 'lunas' || $admin_status === '1' || $admin_status === 'true') {
-                                $status_administrasi = 1;
-                            }
-                        }
+                        // Status administrasi sudah tidak digunakan lagi
                         
                         // Validate status
                         if ($status !== 'lulus' && $status !== 'tidak_lulus') {
@@ -103,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                             $skipped++;
                         } else {
                             // Insert new record
-                            $stmt->bind_param("ssssssssi", $exam_number, $password, $nisn, $name, $class, $jurusan, $birth_date, $status, $status_administrasi);
+                            $stmt->bind_param("ssssssss", $exam_number, $password, $nisn, $name, $class, $jurusan, $birth_date, $status);
                             $stmt->execute();
                             $imported++;
                         }

@@ -36,8 +36,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nisn = clean_input($_POST['nisn']);
     $name = clean_input($_POST['name']);
     $class = clean_input($_POST['class']);
+    $jurusan = clean_input($_POST['jurusan']);
     $birth_date = clean_input($_POST['birth_date']);
     $status = clean_input($_POST['status']);
+    
+    // Check if reset password is requested
+    $reset_password = isset($_POST['reset_password']) && $_POST['reset_password'] == 1;
+    $password = null;
+    if ($reset_password) {
+        $password = generate_unique_password(10);
+    }
     
     // Validate input
     if (empty($exam_number) || empty($nisn) || empty($name) || empty($class) || empty($birth_date)) {
@@ -54,9 +62,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Nomor ujian sudah terdaftar';
         } else {
             // Update student data
-            $update_sql = "UPDATE students SET exam_number = ?, nisn = ?, name = ?, class = ?, birth_date = ?, status = ? WHERE id = ?";
-            $update_stmt = $conn->prepare($update_sql);
-            $update_stmt->bind_param("ssssssi", $exam_number, $nisn, $name, $class, $birth_date, $status, $id);
+            if ($reset_password) {
+                $update_sql = "UPDATE students SET exam_number = ?, nisn = ?, name = ?, class = ?, jurusan = ?, birth_date = ?, status = ?, password = ? WHERE id = ?";
+                $update_stmt = $conn->prepare($update_sql);
+                $update_stmt->bind_param("sssssssssi", $exam_number, $nisn, $name, $class, $jurusan, $birth_date, $status, $password, $id);
+            } else {
+                $update_sql = "UPDATE students SET exam_number = ?, nisn = ?, name = ?, class = ?, jurusan = ?, birth_date = ?, status = ? WHERE id = ?";
+                $update_stmt = $conn->prepare($update_sql);
+                $update_stmt->bind_param("sssssssi", $exam_number, $nisn, $name, $class, $jurusan, $birth_date, $status, $id);
+            }
             
             if ($update_stmt->execute()) {
                 set_flash_message('Data siswa berhasil diperbarui', 'success');
@@ -118,6 +132,10 @@ include '../includes/header.php';
                         <input type="text" class="form-control" id="class" name="class" value="<?php echo htmlspecialchars($student['class']); ?>" required>
                     </div>
                     <div class="col-md-6">
+                        <label for="jurusan" class="form-label">Jurusan <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="jurusan" name="jurusan" value="<?php echo htmlspecialchars($student['jurusan'] ?? ''); ?>" required>
+                    </div>
+                    <div class="col-md-6">
                         <label for="birth_date" class="form-label">Tanggal Lahir <span class="text-danger">*</span></label>
                         <input type="date" class="form-control" id="birth_date" name="birth_date" value="<?php echo htmlspecialchars($student['birth_date']); ?>" required>
                     </div>
@@ -128,6 +146,17 @@ include '../includes/header.php';
                             <option value="tidak_lulus" <?php echo ($student['status'] === 'tidak_lulus') ? 'selected' : ''; ?>>Tidak Lulus</option>
                         </select>
                     </div>
+                    <div class="col-md-6">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="form-control bg-light"><?php echo isset($student['password']) ? '••••••••••' : 'Tidak ada'; ?></span>
+                            <div class="form-check form-switch ms-3 mt-2">
+                                <input class="form-check-input" type="checkbox" id="reset_password" name="reset_password" value="1">
+                                <label class="form-check-label" for="reset_password">Reset Password</label>
+                            </div>
+                        </div>
+                        <small class="form-text text-muted">Centang untuk mengganti password dengan yang baru (10 karakter acak dengan kombinasi simbol)</small>
+                    </div>
                     <div class="col-12 mt-4">
                         <hr>
                         <div class="d-flex justify-content-end gap-2">
@@ -137,6 +166,11 @@ include '../includes/header.php';
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-1"></i> Simpan Perubahan
                             </button>
+                            <?php if ($reset_password && isset($password)): ?>
+                                <div class="alert alert-info mt-3">
+                                    <strong>Password baru:</strong> <?php echo $password; ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

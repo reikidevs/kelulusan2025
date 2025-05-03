@@ -107,8 +107,11 @@ include '../includes/header.php';
                                 <option value="tidak_lulus" <?php echo (isset($_GET['status']) && $_GET['status'] === 'tidak_lulus') ? 'selected' : ''; ?>>Tidak Lulus</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             <button type="submit" class="btn btn-primary w-100">Filter</button>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#bulkDeleteModal"><i class="fas fa-trash"></i></button>
                         </div>
                     </form>
                 </div>
@@ -127,7 +130,6 @@ include '../includes/header.php';
                             <th>Jurusan</th>
                             <th>Tanggal Lahir</th>
                             <th>Status</th>
-                            <th>Administrasi</th>
                             <th width="150">Aksi</th>
                         </tr>
                     </thead>
@@ -232,9 +234,6 @@ include '../includes/header.php';
                                 echo '<td>' . format_tanggal_indo($row['birth_date']) . '</td>';
                                 echo '<td><span class="badge ' . ($row['status'] === 'lulus' ? 'badge-lulus' : 'badge-tidak_lulus') . '">' . 
                                       ($row['status'] === 'lulus' ? 'Lulus' : 'Tidak Lulus') . '</span></td>';
-                                $status_administrasi = isset($row['status_administrasi']) ? $row['status_administrasi'] : 0;
-                                echo '<td><span class="badge bg-' . ($status_administrasi == 1 ? 'success' : 'warning') . '">' . 
-                                      ($status_administrasi == 1 ? 'Lunas' : 'Belum Lunas') . '</span></td>';
                                 echo '<td>
                                         <div class="btn-group" role="group">
                                             <a href="edit_student.php?id=' . $row['id'] . '" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Edit">
@@ -344,6 +343,31 @@ include '../includes/header.php';
     </div>
 </div>
 
+<!-- Bulk Delete Modal -->
+<div class="modal fade" id="bulkDeleteModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bulkDeleteModalLabel">Hapus Data Berdasarkan Filter</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Anda akan menghapus seluruh data siswa dengan filter:</p>
+                <ul id="filterSummary" class="mb-3">
+                    <!-- Filter summary will be inserted here via JavaScript -->
+                </ul>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i> <strong>Peringatan:</strong> Tindakan ini tidak dapat dibatalkan!
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" id="confirmBulkDelete" class="btn btn-danger">Hapus Semua Data</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Notification Modal -->
 <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -407,6 +431,92 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // Bulk Delete functionality
+    const bulkDeleteModal = document.getElementById('bulkDeleteModal');
+    const filterSummary = document.getElementById('filterSummary');
+    const confirmBulkDeleteBtn = document.getElementById('confirmBulkDelete');
+    
+    if (bulkDeleteModal) {
+        bulkDeleteModal.addEventListener('show.bs.modal', function() {
+            // Get current filter values
+            const searchValue = document.querySelector('input[name="search"]').value.trim();
+            const classValue = document.querySelector('select[name="class"]').value;
+            const jurusanValue = document.querySelector('select[name="jurusan"]').value;
+            const statusValue = document.querySelector('select[name="status"]').value;
+            
+            // Clear previous filter summary
+            filterSummary.innerHTML = '';
+            
+            // Build filter summary list
+            if (searchValue) {
+                filterSummary.innerHTML += `<li>Pencarian: <strong>${searchValue}</strong></li>`;
+            }
+            
+            if (classValue) {
+                filterSummary.innerHTML += `<li>Kelas: <strong>${classValue}</strong></li>`;
+            }
+            
+            if (jurusanValue) {
+                filterSummary.innerHTML += `<li>Jurusan: <strong>${jurusanValue}</strong></li>`;
+            }
+            
+            if (statusValue) {
+                let statusText = statusValue === 'lulus' ? 'Lulus' : 'Tidak Lulus';
+                filterSummary.innerHTML += `<li>Status: <strong>${statusText}</strong></li>`;
+            }
+            
+            // If no filters, show 'All data'
+            if (!searchValue && !classValue && !jurusanValue && !statusValue) {
+                filterSummary.innerHTML = '<li><strong>Semua data siswa!</strong></li>';
+            }
+        });
+        
+        // Handle bulk delete confirmation
+        if (confirmBulkDeleteBtn) {
+            confirmBulkDeleteBtn.addEventListener('click', function() {
+                // Get filter values
+                const searchValue = document.querySelector('input[name="search"]').value.trim();
+                const classValue = document.querySelector('select[name="class"]').value;
+                const jurusanValue = document.querySelector('select[name="jurusan"]').value;
+                const statusValue = document.querySelector('select[name="status"]').value;
+                
+                // Create a form and submit it
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'bulk_delete.php';
+                
+                // Add filter values as hidden inputs
+                const addInput = (name, value) => {
+                    if (value) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = name;
+                        input.value = value;
+                        form.appendChild(input);
+                    }
+                };
+                
+                addInput('search', searchValue);
+                addInput('class', classValue);
+                addInput('jurusan', jurusanValue);
+                addInput('status', statusValue);
+                
+                // Add bulk delete flag
+                const deleteFlag = document.createElement('input');
+                deleteFlag.type = 'hidden';
+                deleteFlag.name = 'bulk_delete';
+                deleteFlag.value = '1';
+                form.appendChild(deleteFlag);
+                
+                // Add CSRF token or any other security measures if needed
+                
+                // Submit the form
+                document.body.appendChild(form);
+                form.submit();
+            });
+        }
+    }
     
     // Initialize tooltips
     const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
