@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Semua role (admin/superadmin) diarahkan ke dashboard admin
                 redirect('/admin/');
             } else {
-                $error = 'Password salah';
+                $error = 'Username atau Password salah';
             }
         } else {
             $error = 'Username tidak ditemukan';

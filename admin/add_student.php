@@ -64,9 +64,9 @@ include '../includes/header.php';
         <h2 class="mb-0"><?php echo $page_title; ?></h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="/kelulusan2025/">Beranda</a></li>
-                <li class="breadcrumb-item"><a href="/kelulusan2025/admin/">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="/kelulusan2025/admin/students.php">Data Siswa</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo base_url('/'); ?>">Beranda</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo base_url('/admin/'); ?>">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo base_url('/admin/students.php'); ?>">Data Siswa</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Tambah Siswa</li>
             </ol>
         </nav>

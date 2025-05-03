@@ -6,5 +6,5 @@ session_start();
 session_destroy();
 
 // Redirect to login page
-redirect('/admin/login.php');
+redirect('/admin/login.php', true);
 ?>

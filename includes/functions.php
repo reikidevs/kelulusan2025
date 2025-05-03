@@ -11,20 +11,26 @@ if (session_status() == PHP_SESSION_NONE) {
  * @return string Complete URL
  */
 function base_url($path = '') {
-    $base_url = '';
-    $server_name = $_SERVER['SERVER_NAME'] ?? '';
-    
-    // If in development environment (localhost or local IP)
-    if ($server_name == 'localhost' || $server_name == '127.0.0.1' || strpos($server_name, '192.168.') === 0) {
-        $base_url = '/kelulusan2025';
+    // Include environment configuration if not already included
+    if (!isset($_ENV['APP_URL'])) {
+        require_once __DIR__ . '/../config/env.php';
     }
+    
+    // Get base URL from environment configuration
+    $base_url = $_ENV['APP_ENV'] === 'development' ? '/kelulusan2025' : '';
     
     // Make sure path starts with a slash if not empty
     if (!empty($path) && substr($path, 0, 1) !== '/') {
         $path = '/' . $path;
     }
     
-    return $base_url . $path;
+    // For empty path, normalize with trailing slash for consistency
+    if (empty($path) || $path === '/') {
+        return rtrim($base_url, '/') . '/';
+    }
+    
+    // Return clean path without double slashes
+    return rtrim($base_url, '/') . $path;
 }
 
 // Include database connection

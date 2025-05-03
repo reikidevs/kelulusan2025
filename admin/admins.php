@@ -166,7 +166,7 @@ if ($result->num_rows > 0) {
         <h2 class="mb-0">Kelola Akun Admin</h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="/kelulusan2025/admin/">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo base_url('/admin/'); ?>">Dashboard</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Kelola Admin</li>
             </ol>
         </nav>
