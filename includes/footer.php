@@ -12,7 +12,7 @@
                             <img src="<?php echo base_url('/assets/images/logo/logo-skanu.png'); ?>" alt="<?php echo $school_name; ?>" height="60" class="me-3">
                             <div>
                                 <h4 class="text-white fw-bold mb-1"><?php echo $school_name; ?></h4>
-                                <p class="text-white-50 fs-6 mb-0">Pendidikan Berkualitas Berbasis Pesantren</p>
+                                <p class="text-white-50 fs-6 mb-0">Sekolah Vokasi Pusat Keunggulan dan Binaan Daihatsu</p>
                             </div>
                         </div>
                         <p class="text-white-50 mb-2">Website untuk pengecekan hasil kelulusan siswa <?php echo $school_name; ?> secara online dengan mudah dan cepat.</p>
@@ -28,11 +28,11 @@
                     <div class="col-lg-3 col-md-6 ps-lg-5">
                         <h5 class="text-white mb-4 footer-heading">Info Sekolah</h5>
                         <ul class="list-unstyled footer-links">
-                            <li><a href="#"><i class="fas fa-angle-right me-2"></i>Profil Sekolah</a></li>
-                            <li><a href="#"><i class="fas fa-angle-right me-2"></i>Program Keahlian</a></li>
-                            <li><a href="#"><i class="fas fa-angle-right me-2"></i>Fasilitas</a></li>
-                            <li><a href="#"><i class="fas fa-angle-right me-2"></i>Prestasi</a></li>
-                            <li><a href="#"><i class="fas fa-angle-right me-2"></i>PPDB <?php echo date('Y'); ?></a></li>
+                            <li><a href="https://smknu1slawi.sch.id"><i class="fas fa-angle-right me-2"></i>Profil Sekolah</a></li>
+                            <li><a href="https://smknu1slawi.sch.id"><i class="fas fa-angle-right me-2"></i>Program Keahlian</a></li>
+                            <li><a href="https://smknu1slawi.sch.id"><i class="fas fa-angle-right me-2"></i>Fasilitas</a></li>
+                            <li><a href="https://smknu1slawi.sch.id"><i class="fas fa-angle-right me-2"></i>Prestasi</a></li>
+                            <li><a href="https://smknu1slawi.sch.id"><i class="fas fa-angle-right me-2"></i>PPDB <?php echo date('Y'); ?></a></li>
                         </ul>
                     </div>
 
@@ -42,7 +42,6 @@
                         <ul class="list-unstyled footer-links">
                             <li><a href="<?php echo base_url('/'); ?>"><i class="fas fa-angle-right me-2"></i>Beranda</a></li>
                             <li><a href="#cek-kelulusan"><i class="fas fa-angle-right me-2"></i>Cek Kelulusan</a></li>
-                            <li><a href="<?php echo base_url('/admin/login.php'); ?>"><i class="fas fa-angle-right me-2"></i>Admin Login</a></li>
                         </ul>
                     </div>
 
@@ -55,7 +54,7 @@
                                     <i class="fas fa-map-marker-alt"></i>
                                 </div>
                                 <div>
-                                    <p class="text-white-50 mb-0">Jl. Raya Selatan No. 99, Slawi, Kab. Tegal, Jawa Tengah</p>
+                                    <p class="text-white-50 mb-0">Jl. Jenderal Ahmad Yani Jl. Raya Sel. Banjaran No.20, Procot, Kec. Slawi, Kabupaten Tegal, Jawa Tengah 52412</p>
                                 </div>
                             </div>
                             <div class="d-flex mb-3">
@@ -63,7 +62,7 @@
                                     <i class="fas fa-phone-alt"></i>
                                 </div>
                                 <div>
-                                    <p class="text-white-50 mb-0">(0283) 4890351</p>
+                                    <p class="text-white-50 mb-0">(0283) 492695</p>
                                 </div>
                             </div>
                             <div class="d-flex">
@@ -71,7 +70,7 @@
                                     <i class="fas fa-envelope"></i>
                                 </div>
                                 <div>
-                                    <p class="text-white-50 mb-0">info@smknu1slawi.sch.id</p>
+                                    <p class="text-white-50 mb-0">smknu01slawi@gmail.com</p>
                                 </div>
                             </div>
                         </div>
