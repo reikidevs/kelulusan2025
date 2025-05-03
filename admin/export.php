@@ -20,7 +20,7 @@ $sheet = $spreadsheet->getActiveSheet();
 $sheet->setTitle('Data Siswa');
 
 // Set headers with styling
-$headers = ['No. Ujian', 'Password', 'NISN', 'Nama Siswa', 'Kelas', 'Jurusan', 'Tanggal Lahir', 'Status', 'Status Administrasi'];
+$headers = ['No. Ujian', 'Password', 'NISN', 'Nama Siswa', 'Kelas', 'Jurusan', 'Tanggal Lahir', 'Status Kelulusan'];
 $headerStyle = [
     'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
     'fill' => ['fillType' => Fill::FILL_SOLID, 'color' => ['rgb' => '4472C4']],
@@ -58,7 +58,6 @@ if ($result->num_rows > 0) {
     
     while ($row = $result->fetch_assoc()) {
         $status = ($row['status'] === 'lulus') ? 'Lulus' : 'Tidak Lulus';
-        $administrasi = isset($row['status_administrasi']) && $row['status_administrasi'] == 1 ? 'Lunas' : 'Belum Lunas';
         
         // Write data to Excel
         $sheet->setCellValue('A' . $rowIndex, $row['exam_number']);
@@ -69,7 +68,6 @@ if ($result->num_rows > 0) {
         $sheet->setCellValue('F' . $rowIndex, isset($row['jurusan']) ? $row['jurusan'] : 'N/A');
         $sheet->setCellValue('G' . $rowIndex, $row['birth_date']);
         $sheet->setCellValue('H' . $rowIndex, $status);
-        $sheet->setCellValue('I' . $rowIndex, $administrasi);
         
         // Apply conditional formatting for status columns
         if ($status === 'Lulus') {
@@ -80,16 +78,6 @@ if ($result->num_rows > 0) {
             $sheet->getStyle('H' . $rowIndex)->getFill()
                 ->setFillType(Fill::FILL_SOLID)
                 ->getStartColor()->setRGB('FFCCCC'); // Light red
-        }
-        
-        if ($administrasi === 'Lunas') {
-            $sheet->getStyle('I' . $rowIndex)->getFill()
-                ->setFillType(Fill::FILL_SOLID)
-                ->getStartColor()->setRGB('C6EFCE'); // Light green
-        } else {
-            $sheet->getStyle('I' . $rowIndex)->getFill()
-                ->setFillType(Fill::FILL_SOLID)
-                ->getStartColor()->setRGB('FFEB9C'); // Light yellow
         }
         
         $rowIndex++;

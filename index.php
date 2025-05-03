@@ -95,44 +95,6 @@ include 'includes/header.php';
                 
                 <?php if ($show_result): ?>
                 <!-- Show Result -->
-                <?php if ($student['status_administrasi'] == 0): ?>
-                <!-- Tampilkan peringatan jika status administrasi belum lunas -->
-                <div class="result-card warning p-4 rounded-3 mb-4 shadow bounce">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
-                        <h4 class="mb-2 mb-md-0"><?php echo $student['name']; ?></h4>
-                        <span class="badge badge-warning py-2 px-3 rounded-pill">
-                            ADMINISTRASI BELUM LUNAS
-                        </span>
-                    </div>
-                    
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <p class="mb-1 text-muted small">Nomor Ujian</p>
-                            <p class="mb-0 fw-bold"><?php echo $student['exam_number']; ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="mb-1 text-muted small">NISN</p>
-                            <p class="mb-0 fw-bold"><?php echo $student['nisn']; ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="mb-1 text-muted small">Kelas</p>
-                            <p class="mb-0 fw-bold"><?php echo $student['class']; ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="mb-1 text-muted small">Jurusan</p>
-                            <p class="mb-0 fw-bold"><?php echo $student['jurusan']; ?></p>
-                        </div>
-                    </div>
-                    
-                    <div class="alert alert-warning mt-3 mb-3">
-                        <i class="fas fa-exclamation-triangle me-2"></i> <strong>Perhatian!</strong> Status administrasi Anda belum lunas. Silakan hubungi bagian administrasi sekolah untuk menyelesaikan kewajiban administrasi.
-                    </div>
-                    
-                    <div class="alert alert-info mb-0">
-                        <i class="fas fa-info-circle me-2"></i> Status kelulusan akan ditampilkan setelah Anda menyelesaikan kewajiban administrasi.
-                    </div>
-                </div>
-                <?php else: ?>
                 <!-- Tampilkan hasil kelulusan jika status administrasi sudah lunas -->
                 <div class="result-card <?php echo $student['status'] === 'lulus' ? 'success' : 'failed'; ?> p-4 rounded-3 mb-4 shadow bounce">
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
@@ -163,10 +125,6 @@ include 'includes/header.php';
                             <p class="mb-1 text-muted small">Tanggal Lahir</p>
                             <p class="mb-0 fw-bold"><?php echo format_tanggal_indo($student['birth_date']); ?></p>
                         </div>
-                        <div class="col-md-6">
-                            <p class="mb-1 text-muted small">Status Administrasi</p>
-                            <p class="mb-0 fw-bold"><span class="badge bg-success">LUNAS</span></p>
-                        </div>
                     </div>
                     
                     <?php if ($student['status'] === 'lulus'): ?>
@@ -185,11 +143,20 @@ include 'includes/header.php';
                         </button>
                     </div>
                 </div>
-                <?php endif; ?>
+                
+                <!-- Search Form section moved to the else block -->
+                
+                <?php if ($show_result): ?>
+                <div class="mt-4 text-center">
+                    <a href="index.php#cek-kelulusan" class="btn btn-outline-nu">
+                        <i class="fas fa-redo me-2"></i> Cek Nomor Lain
+                    </a>
+                </div>
                 <?php endif; ?>
                 
+                <?php else: ?> <!-- If not showing results, show the form -->
                 <!-- Search Form -->
-                <form id="verification-form" method="POST" action="#cek-kelulusan" class="<?php echo $show_result ? 'd-none' : ''; ?>">
+                <form id="verification-form" method="POST" action="#cek-kelulusan">
                     <div class="mb-3">
                         <label for="exam_number" class="form-label fw-bold"><i class="fas fa-id-card me-2 text-nu"></i>Nomor Ujian</label>
                         <div class="input-group">
@@ -218,14 +185,7 @@ include 'includes/header.php';
                         </button>
                     </div>
                 </form>
-                
-                <?php if ($show_result): ?>
-                <div class="mt-4 text-center">
-                    <a href="index.php#cek-kelulusan" class="btn btn-outline-nu">
-                        <i class="fas fa-redo me-2"></i> Cek Nomor Lain
-                    </a>
-                </div>
-                <?php endif; ?>
+                <?php endif; ?> <!-- Close if ($show_result) -->
             </div>
         </div>
     </div>
