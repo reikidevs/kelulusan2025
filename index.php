@@ -38,7 +38,7 @@ include 'includes/header.php';
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <h1 class="mb-3 fade-in" style="font-size: 3.2rem; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">Pengumuman Kelulusan</h1>
+                <h1 class="mb-3 fade-in" style="font-size: min(3.2rem, 10vw); text-shadow: 0 2px 10px rgba(0,0,0,0.2);">Pengumuman Kelulusan</h1>
                 <h2 class="fs-3 fw-normal text-white fade-in fade-in-delay-1"><?php echo $school_name; ?></h2>
                 <div class="d-inline-block bg-dark bg-opacity-25 rounded-pill px-4 py-2 mb-3 fade-in fade-in-delay-2">
                     <p class="lead mb-0"><i class="fas fa-calendar-alt me-2"></i> Tahun Ajaran <?php echo $school_year; ?></p>
@@ -96,7 +96,7 @@ include 'includes/header.php';
                 <?php if ($show_result): ?>
                 <!-- Show Result -->
                 <!-- Tampilkan hasil kelulusan jika status administrasi sudah lunas -->
-                <div class="result-card <?php echo $student['status'] === 'lulus' ? 'success' : 'failed'; ?> p-4 rounded-3 mb-4 shadow bounce">
+                <div class="result-card <?php echo $student['status'] === 'lulus' ? 'success' : 'failed'; ?> p-3 p-md-4 rounded-3 mb-4 shadow bounce overflow-hidden">
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
                         <h4 class="mb-2 mb-md-0"><?php echo $student['name']; ?></h4>
                         <span class="badge <?php echo $student['status'] === 'lulus' ? 'badge-lulus' : 'badge-tidak_lulus'; ?> py-2 px-3 rounded-pill">
@@ -130,25 +130,20 @@ include 'includes/header.php';
                     <?php if ($student['status'] === 'lulus'): ?>
                     <div class="alert bg-nu text-white mt-3 mb-0">
                         <i class="fas fa-check-circle me-2"></i> Selamat! Anda dinyatakan <strong>LULUS</strong>
+                        <p class="mt-2 mb-0"><small>Untuk pengambilan Surat Keterangan Lulus menunggu informasi selanjutnya</small></p>
                     </div>
                     <?php else: ?>
                     <div class="alert alert-danger mt-3 mb-0">
                         <i class="fas fa-times-circle me-2"></i> Mohon maaf, Anda dinyatakan <strong>TIDAK LULUS</strong>
                     </div>
                     <?php endif; ?>
-                    
-                    <div class="text-center mt-4">
-                        <button class="btn btn-outline-primary btn-print">
-                            <i class="fas fa-print me-2"></i> Cetak Hasil
-                        </button>
-                    </div>
                 </div>
                 
                 <!-- Search Form section moved to the else block -->
                 
                 <?php if ($show_result): ?>
                 <div class="mt-4 text-center">
-                    <a href="index.php#cek-kelulusan" class="btn btn-outline-nu">
+                    <a href="index.php#cek-kelulusan" class="btn btn-outline-nu d-block d-md-inline-block mx-auto" style="min-width: 200px;">
                         <i class="fas fa-redo me-2"></i> Cek Nomor Lain
                     </a>
                 </div>
@@ -180,7 +175,7 @@ include 'includes/header.php';
                     
                     <!-- Tombol alternatif jika di atas tidak muncul -->
                     <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-lg" style="background-color: #126E51; color: white; padding: 15px 30px; font-weight: bold; font-size: 1.25rem;">
+                        <button type="submit" class="btn btn-lg d-block d-md-inline-block mx-auto" style="background-color: #126E51; color: white; padding: 15px 30px; font-weight: bold; font-size: 1.25rem; min-width: 240px;">
                             <i class="fas fa-search-plus me-2"></i> CEK KELULUSAN
                         </button>
                     </div>
@@ -207,8 +202,8 @@ include 'includes/header.php';
                         <div class="rounded-circle bg-nu text-white d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
                             <i class="fas fa-id-card fa-2x"></i>
                         </div>
-                        <h4>1. Siapkan Nomor Ujian</h4>
-                        <p>Pastikan Anda memiliki nomor ujian yang benar sebelum melakukan pengecekan</p>
+                        <h4>1. Siapkan Nomor Ujian dan Password</h4>
+                        <p>Pastikan Anda memiliki nomor ujian dan password yang benar dari surat yang telah diambil di Wali Kelas</p>
                     </div>
                 </div>
             </div>
@@ -218,8 +213,8 @@ include 'includes/header.php';
                         <div class="rounded-circle bg-nu text-white d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
                             <i class="fas fa-search fa-2x"></i>
                         </div>
-                        <h4>2. Masukkan Nomor Ujian</h4>
-                        <p>Masukkan nomor ujian pada form di atas dan klik tombol "Cek Hasil Kelulusan"</p>
+                        <h4>2. Masukkan Nomor Ujian dan Password</h4>
+                        <p>Masukkan nomor ujian dan password yang telah diambil di Wali Kelas pada form di atas dan klik tombol "Cek Hasil Kelulusan"</p>
                     </div>
                 </div>
             </div>
@@ -234,6 +229,22 @@ include 'includes/header.php';
                     </div>
                 </div>
             </div>
+            <div class="row mt-4 mt-md-5">
+                <div class="col-12 text-center">
+                    <div class="card bg-light shadow-sm border-0 mx-2 mx-md-0">
+                        <div class="card-body py-3">
+                            <p class="mb-0 small">
+                                <i class="fas fa-code me-2"></i> Aplikasi dikembangkan oleh reikidevs. 
+                                Jika terdapat masalah hubungi 
+                                <a href="https://www.instagram.com/reikidevs/" target="_blank" class="text-nu">
+                                    <i class="fab fa-instagram"></i> reikidevs
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>

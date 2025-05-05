@@ -158,45 +158,32 @@ function set_flash_message($message, $type = 'info') {
  * @return string Random password
  */
 function generate_random_password($length = 10) {
-    // Karakter yang digunakan untuk password (huruf, angka, dan simbol)
+    // Karakter yang digunakan untuk password (hanya huruf besar dan angka)
     $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $lowercase = 'abcdefghijklmnopqrstuvwxyz';
     $numbers = '0123456789';
-    $symbols = '!@#$%&*-_+.'; // Simbol yang lebih sederhana dan tidak terlalu banyak
     
     // Pastikan panjang password minimal 10 karakter
     if ($length < 10) $length = 10;
     
-    // Generate password dengan komposisi dominan huruf
+    // Generate password dengan kombinasi huruf besar dan angka
     $password = [];
     
     // Pastikan password memiliki minimal:
     // - 1 huruf kapital
-    // - 1 huruf kecil
     // - 1 angka
-    // - 1 simbol (opsional, tapi direkomendasikan)
     $password[] = $uppercase[rand(0, strlen($uppercase) - 1)]; // Min 1 uppercase
-    $password[] = $lowercase[rand(0, strlen($lowercase) - 1)]; // Min 1 lowercase
     $password[] = $numbers[rand(0, strlen($numbers) - 1)]; // Min 1 number
-    $password[] = $symbols[rand(0, strlen($symbols) - 1)]; // Min 1 simbol
     
-    // Untuk sisa karakter, dominan huruf (70% huruf, 20% angka, 10% simbol)
+    // Untuk sisa karakter, 70% huruf besar, 30% angka
     $remaining_length = $length - count($password);
     
     for ($i = 0; $i < $remaining_length; $i++) {
         $rand = rand(1, 10);
         
-        if ($rand <= 7) { // 70% huruf
-            // 50-50 huruf besar dan kecil
-            if (rand(0, 1) == 0) {
-                $password[] = $uppercase[rand(0, strlen($uppercase) - 1)];
-            } else {
-                $password[] = $lowercase[rand(0, strlen($lowercase) - 1)];
-            }
-        } else if ($rand <= 9) { // 20% angka
+        if ($rand <= 7) { // 70% huruf besar
+            $password[] = $uppercase[rand(0, strlen($uppercase) - 1)];
+        } else { // 30% angka
             $password[] = $numbers[rand(0, strlen($numbers) - 1)];
-        } else { // 10% simbol
-            $password[] = $symbols[rand(0, strlen($symbols) - 1)];
         }
     }
     

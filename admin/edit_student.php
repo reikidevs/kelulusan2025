@@ -166,15 +166,17 @@ include '../includes/header.php';
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-1"></i> Simpan Perubahan
                             </button>
-                            <?php if ($reset_password && isset($password)): ?>
-                                <div class="alert alert-info mt-3">
-                                    <strong>Password baru:</strong> <?php echo $password; ?>
-                                </div>
-                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
             </form>
+            
+            <?php if (isset($_POST['reset_password']) && $_POST['reset_password'] == 1 && isset($password)): ?>
+            <div class="alert alert-info mt-3">
+                <strong>Password baru:</strong> <?php echo $password; ?>
+                <p class="mb-0 mt-2"><small>Simpan password ini karena tidak akan ditampilkan lagi setelah halaman di-refresh.</small></p>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

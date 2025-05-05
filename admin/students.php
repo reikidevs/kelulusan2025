@@ -239,6 +239,9 @@ include '../includes/header.php';
                                             <a href="edit_student.php?id=' . $row['id'] . '" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#resetPasswordModal" data-id="' . $row['id'] . '" data-name="' . htmlspecialchars($row['name']) . '" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Reset Password">
+                                                <i class="fas fa-key"></i>
+                                            </a>
                                             <a href="#" data-bs-toggle="modal" data-bs-target="#confirmationModal" data-action="delete" data-id="' . $row['id'] . '" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Hapus">
                                                 <i class="fas fa-trash"></i>
                                             </a>
@@ -324,6 +327,15 @@ include '../includes/header.php';
     </div>
 </div>
 
+<?php if (isset($_SESSION['reset_password_data'])): ?>
+<div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+    <strong>Password untuk siswa <?php echo htmlspecialchars($_SESSION['reset_password_data']['student_name']); ?> berhasil direset!</strong>
+    <div class="mt-2">Password baru: <strong><?php echo $_SESSION['reset_password_data']['password']; ?></strong></div>
+    <p class="mb-0 mt-2"><small>Harap catat password ini karena tidak akan ditampilkan lagi.</small></p>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<?php unset($_SESSION['reset_password_data']); endif; ?>
+
 <!-- Confirmation Modal -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -386,6 +398,28 @@ include '../includes/header.php';
     </div>
 </div>
 
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resetPasswordModalLabel">Konfirmasi Reset Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Anda yakin ingin mereset password untuk siswa <strong id="studentName"></strong>?</p>
+                <p class="text-warning"><i class="fas fa-exclamation-triangle me-2"></i> Tindakan ini akan menghasilkan password baru secara acak dan tidak dapat dibatalkan.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <a href="#" id="resetPasswordBtn" class="btn btn-warning">
+                    <i class="fas fa-key me-1"></i> Reset Password
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- DataTables JS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -406,6 +440,19 @@ include '../includes/header.php';
 <script>
 // Toggle password visibility and handle confirmation modal
 document.addEventListener('DOMContentLoaded', function() {
+    // Reset Password Modal
+    const resetPasswordModal = document.getElementById('resetPasswordModal');
+    if (resetPasswordModal) {
+        resetPasswordModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const studentId = button.getAttribute('data-id');
+            const studentName = button.getAttribute('data-name');
+            
+            document.getElementById('studentName').textContent = studentName;
+            document.getElementById('resetPasswordBtn').href = 'reset_password.php?id=' + studentId;
+        });
+    }
+    
     // Password toggle functionality
     const toggleButtons = document.querySelectorAll('.toggle-password');
     
